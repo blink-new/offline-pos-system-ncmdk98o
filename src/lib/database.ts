@@ -15,8 +15,8 @@ export interface Product {
   minStockLevel: number;
   currentStock: number;
   image?: string; // base64 encoded
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: number; // timestamp
+  updatedAt: number; // timestamp
 }
 
 export interface Customer {
@@ -28,8 +28,8 @@ export interface Customer {
   address?: string;
   customerType: 'regular' | 'vip' | 'wholesale';
   loyaltyPoints: number;
-  registrationDate: Date;
-  lastPurchase?: Date;
+  registrationDate: number; // timestamp
+  lastPurchase?: number; // timestamp
 }
 
 export interface Transaction {
@@ -43,7 +43,7 @@ export interface Transaction {
   total: number;
   paymentMethod: 'cash';
   status: 'completed' | 'voided' | 'refunded';
-  timestamp: Date;
+  timestamp: number; // timestamp
   cashierId?: string;
   notes?: string;
 }
@@ -64,7 +64,7 @@ export interface StockAdjustment {
   adjustmentType: 'increase' | 'decrease' | 'correction';
   quantity: number;
   reason: string;
-  timestamp: Date;
+  timestamp: number; // timestamp
   userId?: string;
 }
 
@@ -74,9 +74,9 @@ export interface PurchaseOrder {
   supplier: string;
   status: 'pending' | 'received' | 'partial';
   items: PurchaseOrderItem[];
-  orderDate: Date;
-  expectedDate?: Date;
-  receivedDate?: Date;
+  orderDate: number; // timestamp
+  expectedDate?: number; // timestamp
+  receivedDate?: number; // timestamp
   total: number;
 }
 
@@ -93,7 +93,7 @@ export interface Settings {
   id?: number;
   key: string;
   value: string;
-  updatedAt: Date;
+  updatedAt: number; // timestamp
 }
 
 // Database class
@@ -119,12 +119,12 @@ export class POSDatabase extends Dexie {
 
     // Hooks for automatic timestamps
     this.products.hook('creating', (primKey, obj, trans) => {
-      obj.createdAt = new Date();
-      obj.updatedAt = new Date();
+      obj.createdAt = Date.now();
+      obj.updatedAt = Date.now();
     });
 
     this.products.hook('updating', (modifications, primKey, obj, trans) => {
-      modifications.updatedAt = new Date();
+      modifications.updatedAt = Date.now();
     });
   }
 }
@@ -174,8 +174,8 @@ export const initializeSampleData = async () => {
         supplier: 'TechCorp',
         minStockLevel: 10,
         currentStock: 25,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       },
       {
         sku: 'PROD-002',
@@ -189,8 +189,8 @@ export const initializeSampleData = async () => {
         supplier: 'KitchenWare Inc',
         minStockLevel: 20,
         currentStock: 45,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       },
       {
         sku: 'PROD-003',
@@ -204,8 +204,8 @@ export const initializeSampleData = async () => {
         supplier: 'Paper Plus',
         minStockLevel: 30,
         currentStock: 15, // Low stock for demo
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       },
       {
         sku: 'PROD-004',
@@ -219,8 +219,8 @@ export const initializeSampleData = async () => {
         supplier: 'TechCorp',
         minStockLevel: 15,
         currentStock: 35,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       },
       {
         sku: 'PROD-005',
@@ -234,8 +234,8 @@ export const initializeSampleData = async () => {
         supplier: 'LightCorp',
         minStockLevel: 8,
         currentStock: 12,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       }
     ];
 
@@ -251,8 +251,8 @@ export const initializeSampleData = async () => {
         address: '123 Main St, City, State 12345',
         customerType: 'regular',
         loyaltyPoints: 150,
-        registrationDate: new Date('2024-01-15'),
-        lastPurchase: new Date('2024-01-20')
+        registrationDate: new Date('2024-01-15').getTime(),
+        lastPurchase: new Date('2024-01-20').getTime()
       },
       {
         customerId: 'CUST-002',
@@ -262,8 +262,8 @@ export const initializeSampleData = async () => {
         address: '456 Oak Ave, City, State 12345',
         customerType: 'vip',
         loyaltyPoints: 850,
-        registrationDate: new Date('2023-11-10'),
-        lastPurchase: new Date('2024-01-18')
+        registrationDate: new Date('2023-11-10').getTime(),
+        lastPurchase: new Date('2024-01-18').getTime()
       }
     ];
 
@@ -271,11 +271,11 @@ export const initializeSampleData = async () => {
 
     // Add default settings
     const defaultSettings: Omit<Settings, 'id'>[] = [
-      { key: 'tax_rate', value: '8.5', updatedAt: new Date() },
-      { key: 'currency', value: 'USD', updatedAt: new Date() },
-      { key: 'company_name', value: 'My Store', updatedAt: new Date() },
-      { key: 'company_address', value: '123 Business St, City, State 12345', updatedAt: new Date() },
-      { key: 'company_phone', value: '+1-555-STORE', updatedAt: new Date() }
+      { key: 'tax_rate', value: '8.5', updatedAt: Date.now() },
+      { key: 'currency', value: 'USD', updatedAt: Date.now() },
+      { key: 'company_name', value: 'My Store', updatedAt: Date.now() },
+      { key: 'company_address', value: '123 Business St, City, State 12345', updatedAt: Date.now() },
+      { key: 'company_phone', value: '+1-555-STORE', updatedAt: Date.now() }
     ];
 
     await db.settings.bulkAdd(defaultSettings);

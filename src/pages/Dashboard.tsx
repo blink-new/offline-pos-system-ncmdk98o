@@ -44,10 +44,10 @@ export default function Dashboard() {
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
 
-        // Get today's transactions
+        // Get today's transactions using timestamps
         const todayTransactions = await db.transactions
           .where('timestamp')
-          .between(today, tomorrow)
+          .between(today.getTime(), tomorrow.getTime())
           .and(transaction => transaction.status === 'completed')
           .toArray();
 
@@ -227,7 +227,7 @@ export default function Dashboard() {
                     <div>
                       <p className="font-medium text-sm">{transaction.transactionId}</p>
                       <p className="text-xs text-muted-foreground">
-                        {format(transaction.timestamp, 'MMM dd, HH:mm')}
+                        {format(new Date(transaction.timestamp), 'MMM dd, HH:mm')}
                       </p>
                     </div>
                     <div className="text-right">
